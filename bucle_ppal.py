@@ -24,7 +24,7 @@ while not game_over:
 
     # Gestión de los bordes del juego para rebotar
     if x >= 600 - 10 or x <= 0 + 10:
-        velocidad_x *=gi -1
+        velocidad_x *= -1
 
     if y >= 800 - 10 or y <= 0 + 10:
         velocidad_y *= -1
