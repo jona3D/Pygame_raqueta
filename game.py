@@ -1,5 +1,15 @@
 import pygame as pg
-pg.init()
+#pg.init()
+
+# Mapa de ladrillos para generarlos con forma elegida. Lista de tuplas
+niveles = [
+            [(0,0),(1,1),(2,2),(3,3)],
+            [(0,0),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0),(8,0),(9,0),
+             (0,1),(9,1),
+             (0,2),(9,2),
+             (0,3),(1,3),(2,3),(3,3),(4,3),(5,3),(6,3),(7,3),(8,3),(9,3)]
+             ]
+
 
 # Clase patron para generar las otras clases de objetos del juego
 class Vigneta:
@@ -117,55 +127,67 @@ class Game:
         self.bola = Bola(self.pantalla,ancho // 2, alto // 2, (255,255,0))
         self.raqueta = Raqueta(self.pantalla, ancho//2, alto-30, 100,15)
         self.ladrillos = []  
-        self.contador_vidas = 3
-
-        self.CreaLadrillos()
-    
+        self.contador_vidas = 3    
 
         self.reloj = pg.time.Clock()
 
-    def CreaLadrillos(self):
+    # Pinta 4 filas de 10 columnas de ladrillos. 40 ladrillos
+    """def CreaLadrillos(self):
         for col in range(10):
             for fil in range(4):
                 l = Ladrillo(self.pantalla, 5 + 60 * col, 20 + 30 * fil, 50, 20)
                 self.ladrillos.append(l)
-    
+    """
+    # Pinta mapa de ladrillos de mapa_nivel
+    def CreaLadrillos(self):
+        for col, fil in nivel:
+            l = Ladrillo(self.pantalla, 5 + 60 * col, 20 + 30 * fil, 50, 20)
+            self.ladrillos.append(l)
+            
 
     def bucle_ppal(self):
         game_over = False
         
-        while self.contador_vidas > 0 and not game_over:
+        while self.contador_vidas > 0 and not game_over and nivel < len(niveles):
+            self.CreaLadrillos(nivel)
 
-            # Ajuste de los FPS a 60
-            milisegundos = self.reloj.tick(60)
-            
+            while self.contador_vidas > 0 and not game_over and len(self.ladrillos) > 0:
 
-            eventos = pg.event.get()
-            for evento in eventos:
-                if evento.type == pg.QUIT:
+                # Comprueba que la lista de la drillos está vacia cuando se acaban todos y sale del programa
+                if len(self.ladrillos) == 0:
                     game_over = True
 
-            self.pantalla.fill ((255,0,0))
-            
-            self.bola.mover()
-            self.raqueta.mover()
-            self.bola.compruebaChoque(self.raqueta)
-            if not self.bola.esta_viva:
-                self.contador_vidas -= 1
-                self.bola.reset()
-            
-            self.bola.dibujar()
-            self.raqueta.dibujar()
-           
-            for ladrillo in self.ladrillos:
-                if ladrillo.vivo:
-                    ladrillo.comprobarToque(self.bola)
-                    ladrillo.dibujar()
+                # Ajuste de los FPS a 60
+                milisegundos = self.reloj.tick(60)
                 
-                            
-            
 
-            pg.display.flip()
+                eventos = pg.event.get()
+                for evento in eventos:
+                    if evento.type == pg.QUIT:
+                        game_over = True
+
+                self.pantalla.fill ((255,0,0))
+                
+                self.bola.mover()
+                self.raqueta.mover()
+                self.bola.compruebaChoque(self.raqueta)
+                if not self.bola.esta_viva:
+                    self.contador_vidas -= 1
+                    self.bola.reset()
+                
+                self.bola.dibujar()
+                self.raqueta.dibujar()
+            
+                for ladrillo in self.ladrillos:
+                    if ladrillo.comprobarToque(self.bola):
+                    self.ladrillos.remove(ladrillo)
+                    ladrillo.dibujar()
+                    
+                                
+                
+
+                pg.display.flip()
+            nivel += 1
 
 
 if __name__ == "__main__":
