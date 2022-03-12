@@ -12,17 +12,38 @@ class Vigneta:
         self.vx = 0
         self.vy = 0
 
+    
+    def intersecta(self, otro):
+        """"
+        return (self.x in range(otro.x, otro.x + otro.ancho) or\
+                self.x + self.ancho in range(otro.x, otro.x + otro.ancho)) and \
+                (self.y in range(otro.y, otro.y + otro.alto) or \
+                self.y + self.alto in range(otro.y, otro.y + otro.alto))
+        """
+        if self.ancho > otro.ancho:
+            menor_ancho = otro
+            mayor_ancho = self
+        else:
+            menor_ancho = self
+            mayor_ancho = otro
+
+        if self.alto > otro.alto:
+            menor_alto = otro
+            mayor_alto = self
+        else:
+            menor_alto = self
+            mayor_alto = otro
+
+        return (menor_ancho.x in range(mayor_ancho.x, mayor_ancho.x + mayor_ancho.ancho) or\
+                menor_ancho.x + menor_ancho.ancho in range(mayor_ancho.x, mayor_ancho.x + mayor_ancho.ancho)) and\
+                (menor_alto.y in range(mayor_alto.y, mayor_alto.y + mayor_alto.alto) or\
+                menor_alto.y + menor_alto.alto in range(mayor_alto.y, mayor_alto.y + mayor_alto.alto))
+    
     def dibujar(self):
         pass
 
     def mover(self):
         pass
-
-    def intersecta(self, otro):
-        return (self.x in range(otro.x, otro.x + otro.ancho) or\
-                self.x + self.ancho in range(otro.x, otro.x + otro.ancho)) and \
-                (self.y in range(otro.y, otro.y + otro.alto) or \
-                self.y + self.alto in range(otro.y, otro.y + otro.alto))
 
     
 

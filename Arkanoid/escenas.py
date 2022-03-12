@@ -1,14 +1,25 @@
 import pygame as pg
-from ARKANOID.entities import Bola, Raqueta, Ladrillo
-from ARKANOID import FPS, niveles
+
+from Arkanoid.entities import Bola, Raqueta, Ladrillo
+from Arkanoid import niveles, FPS
 
 
-class Game:
-    def __init__(self, ancho = 600, alto = 800):
-        self.pantalla = pg.display.set_mode((ancho, alto))
-        self.titulo = pg.display.set_caption("Juego Raquetas")
-        self.bola = Bola(self.pantalla,ancho // 2, alto // 2, (255,255,0))
-        self.raqueta = Raqueta(self.pantalla, ancho//2, alto-30, 100,15)
+class Escena:
+    def __init__(self, pantalla):
+        self.pantalla = pantalla
+        self.titulo = pg.display.set_caption("Juego Arkanoid")
+        self.reloj = pg.time.Clock()
+
+    def bucle_ppal() -> bool:
+        pass
+
+class Partida(Escena):
+    def __init__(self, pantalla):
+        super().__init__(pantalla)
+        self.bola = Bola(self.pantalla,self.pantalla.get_width()// 2, 
+                        self.pantalla.get_height() // 2)
+        self.raqueta = Raqueta(self.pantalla,self.pantalla.get_width()// 2, 
+                        self.pantalla.get_height() -30, 100,15)
         self.ladrillos = []  
         self.contador_vidas = 3    
 
@@ -33,11 +44,11 @@ class Game:
         game_over = False
         nivel = 0
         
-        while self.contador_vidas > 0 and not game_over and nivel < len(niveles):
+        while self.contador_vidas > 0 and nivel < len(niveles):
             self.bola.reset()
             self.CreaLadrillos(nivel)
 
-            while self.contador_vidas > 0 and not game_over and len(self.ladrillos) > 0:
+            while self.contador_vidas > 0 and len(self.ladrillos) > 0:
 
                 # Comprueba que la lista de la drillos está vacia cuando se acaban todos y sale del programa
                 if len(self.ladrillos) == 0:
@@ -50,7 +61,7 @@ class Game:
                 eventos = pg.event.get()
                 for evento in eventos:
                     if evento.type == pg.QUIT:
-                        game_over = True
+                        return False
 
                 self.pantalla.fill ((255,0,0))
                 
@@ -67,11 +78,33 @@ class Game:
                 for ladrillo in self.ladrillos:
                     if ladrillo.comprobarToque(self.bola):
                         self.ladrillos.remove(ladrillo)
-                    ladrillo.dibujar()
+                    ladrillo.dibujar()    
+                                             
                 
-                
-                                
-                
-
                 pg.display.flip()
             nivel += 1
+
+
+class GameOver(Escena):
+    def __init__(self, pantalla):
+        pg.Rect
+        super().__init__(pantalla)
+        self.fuente = pg.font.Font("resources/fonts/FredokaOne-Regular.ttf", 25)
+
+    def bucle_ppal(self):
+        while True:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    return False
+
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_SPACE:
+                        return True
+
+            self.pantalla.fill((30,30,255))
+            texto = self.fuente.render("GAME OVER", True, (255,255,0))
+            rectexto = texto.get_rect()
+
+            self.pantalla.blit(texto, (10,10))
+
+            pg.display.flip()
